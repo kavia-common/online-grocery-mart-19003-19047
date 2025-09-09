@@ -1,5 +1,7 @@
 const cors = require('cors');
 const express = require('express');
+const helmet = require('helmet');
+require('dotenv').config();
 const routes = require('./routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('../swagger');
@@ -7,6 +9,7 @@ const swaggerSpec = require('../swagger');
 // Initialize express app
 const app = express();
 
+app.use(helmet());
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -39,7 +42,7 @@ app.use('/docs', swaggerUi.serve, (req, res, next) => {
 });
 
 // Parse JSON request body
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 
 // Mount routes
 app.use('/', routes);
@@ -47,9 +50,10 @@ app.use('/', routes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({
+  const status = err.status || 500;
+  res.status(status).json({
     status: 'error',
-    message: 'Internal Server Error',
+    message: err.message || 'Internal Server Error',
   });
 });
 

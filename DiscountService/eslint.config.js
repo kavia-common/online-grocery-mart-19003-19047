@@ -11,8 +11,15 @@ const jsConfig = {
   },
 };
 
+// Use flat config "ignores" to exclude generated/non-source files
 const ignoreConfig = {
-  ignores: ['node_modules/**'],
+  ignores: [
+    'node_modules/**',
+    'src/db/**',
+    'post_process_status.lock',
+    'dist/**',
+    'build/**',
+  ],
 };
 
 module.exports = [ignoreConfig, jsConfig];
